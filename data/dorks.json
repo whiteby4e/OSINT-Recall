@@ -1,0 +1,74 @@
+[
+  {
+    "id": "site-filetype",
+    "name": "Site + File Type",
+    "template": "site:{domain} {keyword} filetype:{extension}",
+    "fields": [
+      {
+        "name": "domain",
+        "label": "Domain",
+        "placeholder": "example.org"
+      },
+      {
+        "name": "keyword",
+        "label": "Keyword",
+        "placeholder": "documentation"
+      },
+      {
+        "name": "extension",
+        "label": "Extension",
+        "placeholder": "pdf"
+      }
+    ],
+    "example": "site:example.org documentation filetype:pdf"
+  },
+  {
+    "id": "site-title",
+    "name": "Site + Title",
+    "template": "site:{domain} intitle:{keyword}",
+    "fields": [
+      {
+        "name": "domain",
+        "label": "Domain",
+        "placeholder": "example.org"
+      },
+      {
+        "name": "keyword",
+        "label": "Title keyword",
+        "placeholder": "documentation"
+      }
+    ],
+    "example": "site:example.org intitle:documentation"
+  },
+  {
+    "id": "site-url",
+    "name": "Site + URL Text",
+    "template": "site:{domain} inurl:{keyword}",
+    "fields": [
+      {
+        "name": "domain",
+        "label": "Domain",
+        "placeholder": "example.org"
+      },
+      {
+        "name": "keyword",
+        "label": "URL keyword",
+        "placeholder": "docs"
+      }
+    ],
+    "example": "site:example.org inurl:docs"
+  },
+  {
+    "id": "exact-phrase",
+    "name": "Exact Phrase",
+    "template": "\"{phrase}\"",
+    "fields": [
+      {
+        "name": "phrase",
+        "label": "Phrase",
+        "placeholder": "project name"
+      }
+    ],
+    "example": "\"project name\""
+  }
+]
