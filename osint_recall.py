@@ -297,7 +297,7 @@ def search_menu(techniques, state, lookup=None):
     item = choose_from(results, state, "Open")
     if item:
         record_history(state, item["id"])
-        return show_technique(item, state)
+        return show_technique(item, state, lookup)
     return "back"
 
 
@@ -386,7 +386,7 @@ def resources_menu(tools):
 def random_technique(techniques, state, lookup=None):
     item = random.choice(techniques)
     record_history(state, item["id"])
-    return show_technique(item, state)
+    return show_technique(item, state, lookup)
 
 
 def favorites_menu(techniques, state, lookup=None):
@@ -394,7 +394,7 @@ def favorites_menu(techniques, state, lookup=None):
     items = [lookup[x] for x in state["favorites"] if x in lookup]
     item = choose_from(items, state)
     if item:
-        return show_technique(item, state)
+        return show_technique(item, state, lookup)
     return "back"
 
 
