@@ -1,0 +1,68 @@
+[
+  {
+    "id": "public-domain-research",
+    "title": "Research a Public Domain",
+    "goal": "Build a documented, passive picture of a public website or organization.",
+    "steps": [
+      "Define the research question and scope.",
+      "Use search operators for public documentation and reports.",
+      "Review public robots.txt or sitemaps.",
+      "Inspect public DNS/RDAP records for domain context.",
+      "Check Certificate Transparency for historical certificate names.",
+      "Use web archives to compare important pages over time.",
+      "Triangulate important claims with independent public sources.",
+      "Record URLs, timestamps, observations, and confidence."
+    ],
+    "outputs": [
+      "Source list",
+      "Timeline",
+      "Observed relationships",
+      "Confidence notes"
+    ],
+    "safety": "Stay within public information; do not probe systems or bypass access controls."
+  },
+  {
+    "id": "verify-public-image",
+    "title": "Verify a Public Image",
+    "goal": "Assess whether a public image is correctly attributed or contextualized.",
+    "steps": [
+      "Preserve the image and source URL as observed.",
+      "Run a reverse-image search using the full image.",
+      "Try a distinctive crop when useful.",
+      "Compare candidate pages and publication dates.",
+      "Inspect visible signs, language, architecture, or geographic clues.",
+      "Check archived copies when dates conflict.",
+      "Separate observations from inferences.",
+      "State confidence and unresolved contradictions."
+    ],
+    "outputs": [
+      "Candidate sources",
+      "Date comparison",
+      "Visual observations",
+      "Confidence assessment"
+    ],
+    "safety": "Do not use image research to identify, track, or expose private people."
+  },
+  {
+    "id": "public-project-research",
+    "title": "Research a Public Software Project",
+    "goal": "Understand a public software project's history, documentation, and published interface.",
+    "steps": [
+      "Start with the official repository or project site.",
+      "Read official documentation before secondary sources.",
+      "Search public issues and commits for distinctive terms.",
+      "Check releases and version history.",
+      "Compare public API or schema documentation.",
+      "Use archives when an important page changed.",
+      "Verify claims against maintainer sources.",
+      "Record exact versions and dates."
+    ],
+    "outputs": [
+      "Project timeline",
+      "Documentation map",
+      "Version notes",
+      "Source-backed findings"
+    ],
+    "safety": "Do not seek credentials, private repositories, or unauthorized access."
+  }
+]
