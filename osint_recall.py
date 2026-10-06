@@ -296,11 +296,22 @@ def browse(techniques, state, category=None, lookup=None):
     return "back"
 
 
-def search_menu(techniques, state, lookup=None):
+def _difficulty_menu(techniques):
+    values = sorted({x.get("difficulty", "Core") for x in techniques})
+    return values
+
+
+def _tag_menu(techniques):
+    return sorted({tag for item in techniques for tag in item.get("tags", [])})
+
+
+def _technique_search(techniques, state, lookup):
     try:
-        query = input("Search > ").strip()
+        query = input("\nKeyword > ").strip()
     except (EOFError, KeyboardInterrupt):
         return "quit"
+    if not query:
+        return "back"
     results = search_techniques(techniques, query)
     state["last_query"] = query
     save_state(state)
@@ -309,6 +320,113 @@ def search_menu(techniques, state, lookup=None):
         record_history(state, item["id"])
         return show_technique(item, state, lookup)
     return "back"
+
+
+def _technique_filter(techniques, state, lookup, mode):
+    if mode == "category":
+        values = sorted({x["category"] for x in techniques})
+        title = "FILTER BY CATEGORY"
+    elif mode == "difficulty":
+        values = _difficulty_menu(techniques)
+        title = "FILTER BY DIFFICULTY"
+    else:
+        values = _tag_menu(techniques)
+        title = "FILTER BY TAG"
+
+    while True:
+        clear_screen()
+        print(color(BOLD + CYAN, title))
+        print()
+        for i, value in enumerate(values, 1):
+            count = sum(
+                value == (
+                    item["category"] if mode == "category"
+                    else item.get("difficulty", "Core") if mode == "difficulty"
+                    else None
+                )
+                for item in techniques
+            )
+            if mode == "tag":
+                count = sum(value in item.get("tags", []) for item in techniques)
+            print(f"  {i:>2}. {value:<24} {count} techniques")
+        raw = input("\nSelect [number, b=back] > ").strip().lower()
+        if raw in ("b", "back", ""):
+            return "back"
+        if not raw.isdigit() or not 1 <= int(raw) <= len(values):
+            print(color(YELLOW, "Invalid selection."))
+            pause()
+            continue
+
+        value = values[int(raw) - 1]
+        if mode == "category":
+            results = [x for x in techniques if x["category"] == value]
+        elif mode == "difficulty":
+            results = [x for x in techniques if x.get("difficulty", "Core") == value]
+        else:
+            results = [x for x in techniques if value in x.get("tags", [])]
+
+        item = choose_from(results, state, "Open")
+        if item:
+            record_history(state, item["id"])
+            result = show_technique(item, state, lookup)
+            if result == "quit":
+                return "quit"
+        else:
+            return "back"
+
+
+def search_menu(techniques, state, lookup=None):
+    while True:
+        clear_screen()
+        print(color(BOLD + CYAN, "TECHNIQUE EXPLORER"))
+        print(color(DIM, f"{len(techniques)} techniques • {len({x['category'] for x in techniques})} categories"))
+        print()
+        print("  [1] Browse all techniques")
+        print("  [2] Search by keyword")
+        print("  [3] Filter by category")
+        print("  [4] Filter by difficulty")
+        print("  [5] Filter by tag")
+        print("  [6] Random technique")
+        print("  [b] Back")
+        print()
+
+        try:
+            choice = input("Select > ").strip().lower()
+        except (EOFError, KeyboardInterrupt):
+            return "quit"
+
+        if choice == "b":
+            return "back"
+        if choice == "1":
+            item = choose_from(techniques, state, "Open")
+            if item:
+                record_history(state, item["id"])
+                result = show_technique(item, state, lookup)
+                if result == "quit":
+                    return "quit"
+        elif choice == "2":
+            result = _technique_search(techniques, state, lookup)
+            if result == "quit":
+                return "quit"
+        elif choice == "3":
+            result = _technique_filter(techniques, state, lookup, "category")
+            if result == "quit":
+                return "quit"
+        elif choice == "4":
+            result = _technique_filter(techniques, state, lookup, "difficulty")
+            if result == "quit":
+                return "quit"
+        elif choice == "5":
+            result = _technique_filter(techniques, state, lookup, "tag")
+            if result == "quit":
+                return "quit"
+        elif choice == "6":
+            result = random_technique(techniques, state, lookup)
+            if result == "quit":
+                return "quit"
+        else:
+            print(color(YELLOW, "Invalid selection."))
+            pause()
 
 
 def categories_menu(techniques, state, lookup=None):
