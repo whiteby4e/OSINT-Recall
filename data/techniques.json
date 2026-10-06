@@ -16,7 +16,24 @@
       "site:example.org intitle:documentation",
       "site:example.org inurl:docs \"ESP32\""
     ],
-    "notes": "Use only public information and domains you are allowed to research."
+    "notes": "Use only public information and domains you are allowed to research.",
+    "difficulty": "Beginner",
+    "when_to_use": [
+      "Finding public documentation or reports",
+      "Reducing noisy search results",
+      "Locating indexed pages within a known domain"
+    ],
+    "limitations": [
+      "Search-engine syntax differs by provider.",
+      "No result does not prove that a page or file does not exist.",
+      "Indexing can be stale or incomplete."
+    ],
+    "common_mistakes": [
+      "Adding many constraints before testing a simpler query",
+      "Treating search results as a complete inventory",
+      "Assuming an indexed document is current"
+    ],
+    "related": []
   },
   {
     "id": "github-search",
@@ -34,7 +51,24 @@
       "language:python \"error message\"",
       "org:example-org documentation"
     ],
-    "notes": "Do not search for or attempt to obtain credentials, secrets, or private data."
+    "notes": "Do not search for or attempt to obtain credentials, secrets, or private data.",
+    "difficulty": "Beginner",
+    "when_to_use": [
+      "Understanding public projects",
+      "Tracing a distinctive error or package name",
+      "Finding public documentation and implementation clues"
+    ],
+    "limitations": [
+      "Public search does not expose private repository content.",
+      "A code match does not prove that the code is deployed or current.",
+      "Search indexes can lag behind repository changes."
+    ],
+    "common_mistakes": [
+      "Treating a username as proof of identity",
+      "Copying an old result without checking commit history",
+      "Searching for or attempting to use credentials or secrets"
+    ],
+    "related": []
   },
   {
     "id": "web-archives",
@@ -51,7 +85,24 @@
       "Check an archived public homepage",
       "Compare an old public press release with the current page"
     ],
-    "notes": "Respect robots, site terms, and copyright. Archives are evidence, not automatically proof of current facts."
+    "notes": "Respect robots, site terms, and copyright. Archives are evidence, not automatically proof of current facts.",
+    "difficulty": "Beginner",
+    "when_to_use": [
+      "Historical website research",
+      "Change tracking",
+      "Verifying when a public statement or page was visible"
+    ],
+    "limitations": [
+      "Archives may miss assets or dynamic content.",
+      "Capture time is not necessarily publication time.",
+      "Archived pages are evidence of an observed snapshot, not automatic proof of every claim."
+    ],
+    "common_mistakes": [
+      "Ignoring the capture timestamp",
+      "Assuming missing content was never published",
+      "Treating an archive snapshot as a live page"
+    ],
+    "related": []
   },
   {
     "id": "reverse-image",
@@ -68,7 +119,24 @@
       "Search the full image",
       "Search a distinctive crop containing the key subject"
     ],
-    "notes": "Avoid using image matching to identify or track private people."
+    "notes": "Avoid using image matching to identify or track private people.",
+    "difficulty": "Beginner",
+    "when_to_use": [
+      "Checking image provenance",
+      "Finding earlier public appearances",
+      "Comparing visually similar public images"
+    ],
+    "limitations": [
+      "Search engines may not index every copy.",
+      "Resizing, cropping, compression, or edits can reduce matches.",
+      "A matching image does not establish who created it."
+    ],
+    "common_mistakes": [
+      "Assuming the highest-ranked result is the original",
+      "Ignoring publication dates",
+      "Using image matching to identify or track private people"
+    ],
+    "related": []
   },
   {
     "id": "metadata",
@@ -85,7 +153,24 @@
       "Inspect EXIF fields in an image you own",
       "Inspect document properties in a research dataset"
     ],
-    "notes": "Do not use metadata to expose private location or personal information about someone."
+    "notes": "Do not use metadata to expose private location or personal information about someone.",
+    "difficulty": "Beginner",
+    "when_to_use": [
+      "Analyzing your own files",
+      "Studying public research datasets",
+      "Understanding document provenance clues"
+    ],
+    "limitations": [
+      "Metadata can be stripped or modified.",
+      "Different tools write fields differently.",
+      "A timestamp in metadata is not automatically the publication timestamp."
+    ],
+    "common_mistakes": [
+      "Treating metadata as immutable truth",
+      "Publishing private metadata unnecessarily",
+      "Inferring a person's location from metadata without a legitimate reason"
+    ],
+    "related": []
   },
   {
     "id": "dns-rdap",
@@ -104,7 +189,24 @@
       "MX — mail routing",
       "NS — authoritative name servers"
     ],
-    "notes": "Public DNS information is not permission to probe or access the systems behind it."
+    "notes": "Public DNS information is not permission to probe or access the systems behind it.",
+    "difficulty": "Intermediate",
+    "when_to_use": [
+      "Understanding a public domain's naming structure",
+      "Checking mail and authoritative DNS records",
+      "Reviewing public registration information"
+    ],
+    "limitations": [
+      "DNS answers can change and may be cached.",
+      "RDAP fields vary by registry and privacy policy.",
+      "A DNS record does not authorize access to the referenced system."
+    ],
+    "common_mistakes": [
+      "Treating DNS as a complete asset inventory",
+      "Assuming an old record is still active",
+      "Turning passive discovery into unauthorized probing"
+    ],
+    "related": []
   },
   {
     "id": "certificate-transparency",
@@ -121,7 +223,24 @@
       "Look up certificates for example.org",
       "Compare historical certificate names over time"
     ],
-    "notes": "Use results for passive research; do not turn hostname discovery into unauthorized scanning."
+    "notes": "Use results for passive research; do not turn hostname discovery into unauthorized scanning.",
+    "difficulty": "Intermediate",
+    "when_to_use": [
+      "Historical hostname research",
+      "Passive domain mapping",
+      "Comparing certificate observations over time"
+    ],
+    "limitations": [
+      "Certificates can contain names that are no longer active.",
+      "Wildcard certificates reduce hostname detail.",
+      "CT logs are historical evidence, not a live service inventory."
+    ],
+    "common_mistakes": [
+      "Assuming every certificate name is an active host",
+      "Treating CT results as permission to scan",
+      "Ignoring certificate dates and issuers"
+    ],
+    "related": []
   },
   {
     "id": "username-search",
@@ -138,7 +257,24 @@
       "\"sample_handle\"",
       "site:github.com \"sample_handle\""
     ],
-    "notes": "Do not use this technique to stalk, harass, or expose a private person."
+    "notes": "Do not use this technique to stalk, harass, or expose a private person.",
+    "difficulty": "Intermediate",
+    "when_to_use": [
+      "Researching public project identities",
+      "Connecting an author's public profiles",
+      "Studying reuse of a distinctive handle"
+    ],
+    "limitations": [
+      "Handles are not unique identifiers.",
+      "Profiles can be renamed or deleted.",
+      "Public information can be misleading or outdated."
+    ],
+    "common_mistakes": [
+      "Equating a matching username with the same person",
+      "Collecting unnecessary personal information",
+      "Using correlation for stalking or harassment"
+    ],
+    "related": []
   },
   {
     "id": "url-analysis",
@@ -155,7 +291,24 @@
       "https://example.org/docs?page=2",
       "Separate host / path / query / fragment"
     ],
-    "notes": "Prefer offline parsing when experimenting with URLs."
+    "notes": "Prefer offline parsing when experimenting with URLs.",
+    "difficulty": "Beginner",
+    "when_to_use": [
+      "Understanding public links",
+      "Comparing URL structures",
+      "Recognizing tracking or navigation parameters"
+    ],
+    "limitations": [
+      "URL semantics are application-specific.",
+      "Redirect chains can change the final destination.",
+      "Parameter names alone do not reveal server-side behavior."
+    ],
+    "common_mistakes": [
+      "Assuming every parameter can be safely modified",
+      "Confusing a URL path with a filesystem path",
+      "Following unknown redirects without checking the destination"
+    ],
+    "related": []
   },
   {
     "id": "geolocation",
@@ -172,6 +325,159 @@
       "Read a visible road sign",
       "Compare public street features with map imagery"
     ],
-    "notes": "Do not use geolocation to locate a private person or facilitate harassment."
+    "notes": "Do not use geolocation to locate a private person or facilitate harassment.",
+    "difficulty": "Intermediate",
+    "when_to_use": [
+      "Public-image verification",
+      "Geographic research",
+      "Comparing visible infrastructure with map data"
+    ],
+    "limitations": [
+      "Many visual features are shared across regions.",
+      "Map imagery can be outdated.",
+      "Low-resolution images can create false clues."
+    ],
+    "common_mistakes": [
+      "Jumping to a location from one clue",
+      "Ignoring contradictory evidence",
+      "Using geolocation to locate a private person"
+    ],
+    "related": []
+  },
+  {
+    "id": "source-verification",
+    "title": "Source Verification & Triangulation",
+    "category": "Verification",
+    "difficulty": "Intermediate",
+    "tags": [
+      "verification",
+      "sources",
+      "corroboration",
+      "confidence"
+    ],
+    "summary": "Test an OSINT claim against independent public sources and distinguish observation from inference.",
+    "learn": "Triangulation compares independent evidence rather than counting copies of one source. Check provenance, publication time, primary documentation when available, and whether sources actually provide independent information. Record confidence explicitly.",
+    "when_to_use": [
+      "Fact checking public claims",
+      "Validating dates and public project claims",
+      "Reducing false positives"
+    ],
+    "examples": [
+      {
+        "title": "Independent confirmation",
+        "action": "Compare a public announcement with official documentation and an archived snapshot.",
+        "why": "Different sources can provide statement, technical context, and historical timing."
+      },
+      {
+        "title": "Contradiction check",
+        "action": "Record evidence supporting and contradicting a claim before concluding.",
+        "why": "Explicitly tracking contradictions reduces confirmation bias."
+      }
+    ],
+    "limitations": [
+      "Multiple sites may copy one original source.",
+      "Primary sources can contain errors.",
+      "Lack of corroboration is not automatically disproof."
+    ],
+    "common_mistakes": [
+      "Counting duplicate articles as independent evidence",
+      "Ignoring contradictory sources",
+      "Presenting inference as fact"
+    ],
+    "related": [
+      "web-archives",
+      "metadata",
+      "reverse-image"
+    ]
+  },
+  {
+    "id": "robots-sitemaps",
+    "title": "Robots.txt & XML Sitemaps",
+    "category": "Web Discovery",
+    "difficulty": "Beginner",
+    "tags": [
+      "robots.txt",
+      "sitemap",
+      "discovery",
+      "indexing"
+    ],
+    "summary": "Read publicly exposed robots.txt and sitemap files to understand declared crawler guidance and published URL lists.",
+    "learn": "robots.txt communicates crawler preferences and is not an access-control mechanism. XML sitemaps can enumerate URLs intended for search-engine discovery. Both can help explain public site structure but may be incomplete.",
+    "when_to_use": [
+      "Mapping public URL structure",
+      "Finding published sections or canonical URLs",
+      "Understanding crawler directives"
+    ],
+    "examples": [
+      {
+        "title": "Robots file",
+        "url": "https://example.org/robots.txt",
+        "why": "Shows publicly published crawler directives."
+      },
+      {
+        "title": "Sitemap",
+        "url": "https://example.org/sitemap.xml",
+        "why": "May contain URLs intended for search-engine discovery."
+      }
+    ],
+    "limitations": [
+      "robots.txt is not a security boundary.",
+      "Sitemaps may omit pages or contain stale URLs.",
+      "Dynamic sites may expose structure elsewhere."
+    ],
+    "common_mistakes": [
+      "Treating disallow rules as authorization barriers",
+      "Assuming a sitemap is complete",
+      "Requesting URLs that require authorization"
+    ],
+    "related": [
+      "search-operators",
+      "url-analysis"
+    ]
+  },
+  {
+    "id": "public-api-docs",
+    "title": "Public API Documentation",
+    "category": "Web & APIs",
+    "difficulty": "Intermediate",
+    "tags": [
+      "api",
+      "documentation",
+      "openapi",
+      "schema"
+    ],
+    "summary": "Use publicly documented API references and schemas to understand a service's published interface without attempting unauthorized access.",
+    "learn": "Public API documentation can expose endpoints, parameters, authentication requirements, response schemas, rate limits, and versioning. Documentation describes an interface; it does not grant access to protected resources.",
+    "when_to_use": [
+      "Understanding public developer services",
+      "Researching software architecture",
+      "Finding official endpoint documentation"
+    ],
+    "examples": [
+      {
+        "title": "OpenAPI schema",
+        "action": "Read a public OpenAPI schema published by a project.",
+        "why": "Schemas describe documented routes, parameters, and response structures."
+      },
+      {
+        "title": "Version comparison",
+        "action": "Compare public API documentation for two released versions.",
+        "why": "Can reveal documented interface changes over time."
+      }
+    ],
+    "limitations": [
+      "Documentation can lag behind implementation.",
+      "Authentication requirements still apply.",
+      "Undocumented behavior should not be tested without authorization."
+    ],
+    "common_mistakes": [
+      "Treating documentation as permission",
+      "Assuming every documented endpoint is public",
+      "Ignoring version and rate-limit information"
+    ],
+    "related": [
+      "github-search",
+      "url-analysis"
+    ]
   }
 ]
