@@ -222,25 +222,48 @@ def choose_from(items, state, prompt="Select"):
         print(color(YELLOW, "Enter a valid number or b."))
 
 
-def show_technique(item, state):
+def show_technique(item, state, lookup=None):
     while True:
         clear_screen()
-        print(color(CYAN, "━" * 64))
+        print(color(CYAN, "━" * 72))
         print(color(BOLD, item["title"]))
-        print(color(DIM, f"{item['category']}  •  {', '.join(item.get('tags', []))}"))
-        print(color(CYAN, "━" * 64))
+        print(color(DIM, f"{item['category']}  •  {item.get('difficulty', 'Core')}  •  {', '.join(item.get('tags', []))}"))
+        print(color(CYAN, "━" * 72))
+        print(color(BOLD + CYAN, "CONCEPT"))
         print(wrap(item["summary"]))
         print()
-        print(color(BOLD + GREEN, "LEARN"))
+        print(color(BOLD + GREEN, "HOW IT WORKS"))
         print(wrap(item["learn"]))
+        if item.get("when_to_use"):
+            print()
+            print(color(BOLD + BLUE, "WHEN TO USE"))
+            for value in item["when_to_use"]:
+                print(wrap("• " + value))
         print()
-        print(color(BOLD + BLUE, "EXAMPLES"))
+        print(color(BOLD + MAGENTA, "EXAMPLES"))
         for example in item.get("examples", []):
-            print(wrap("• " + example))
-        print()
-        print(color(BOLD + YELLOW, "NOTES"))
-        print(wrap(item["notes"]))
-        print()
+            print(color(BOLD, "  " + example.get("title", "Example")))
+            for key in ("query", "action", "record", "url"):
+                if example.get(key):
+                    print(wrap(f"{key.upper()}: {example[key]}", indent="    "))
+            if example.get("why"):
+                print(wrap("WHY: " + example["why"], indent="    "))
+            print()
+        if item.get("limitations"):
+            print(color(BOLD + YELLOW, "LIMITATIONS"))
+            for value in item["limitations"]:
+                print(wrap("• " + value))
+            print()
+        if item.get("common_mistakes"):
+            print(color(BOLD + RED, "COMMON MISTAKES"))
+            for value in item["common_mistakes"]:
+                print(wrap("• " + value))
+            print()
+        if item.get("related"):
+            print(color(BOLD + CYAN, "RELATED"))
+            names = [lookup[x]["title"] for x in item["related"] if lookup and x in lookup]
+            print(wrap(" → ".join(names) if names else " → ".join(item["related"])))
+            print()
         fav = "Remove favorite" if is_favorite(state, item["id"]) else "Add favorite"
         print(color(DIM, f"[f] {fav}   [b] Back   [q] Quit"))
         try:
@@ -254,18 +277,16 @@ def show_technique(item, state):
             return "back"
         if action in ("q", "quit"):
             return "quit"
-
-
-def browse(techniques, state, category=None):
+def browse(techniques, state, category=None, lookup=None):
     items = [x for x in techniques if not category or x["category"] == category]
     item = choose_from(items, state)
     if item:
         record_history(state, item["id"])
-        return show_technique(item, state)
+        return show_technique(item, state, lookup)
     return "back"
 
 
-def search_menu(techniques, state):
+def search_menu(techniques, state, lookup=None):
     try:
         query = input("Search > ").strip()
     except (EOFError, KeyboardInterrupt):
@@ -280,7 +301,7 @@ def search_menu(techniques, state):
     return "back"
 
 
-def categories_menu(techniques, state):
+def categories_menu(techniques, state, lookup=None):
     categories = sorted({x["category"] for x in techniques})
     while True:
         clear_screen()
@@ -293,7 +314,7 @@ def categories_menu(techniques, state):
         if raw in ("b", "back", ""):
             return "back"
         if raw.isdigit() and 1 <= int(raw) <= len(categories):
-            result = browse(techniques, state, categories[int(raw) - 1])
+            result = browse(techniques, state, categories[int(raw) - 1], lookup)
             if result == "quit":
                 return "quit"
         else:
@@ -362,13 +383,13 @@ def resources_menu(tools):
     return "back"
 
 
-def random_technique(techniques, state):
+def random_technique(techniques, state, lookup=None):
     item = random.choice(techniques)
     record_history(state, item["id"])
     return show_technique(item, state)
 
 
-def favorites_menu(techniques, state):
+def favorites_menu(techniques, state, lookup=None):
     lookup = index_by_id(techniques)
     items = [lookup[x] for x in state["favorites"] if x in lookup]
     item = choose_from(items, state)
@@ -377,7 +398,7 @@ def favorites_menu(techniques, state):
     return "back"
 
 
-def history_menu(techniques, state):
+def history_menu(techniques, state, lookup=None):
     lookup = index_by_id(techniques)
     items = [lookup[x] for x in state["history"] if x in lookup]
     if not items:
