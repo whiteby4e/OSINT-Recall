@@ -242,6 +242,16 @@ def show_technique(item, state, lookup=None):
         print()
         print(color(BOLD + MAGENTA, "EXAMPLES"))
         for example in item.get("examples", []):
+            # Older knowledge entries may use a simple string while newer
+            # entries use structured example objects. Support both formats.
+            if isinstance(example, str):
+                print(wrap("• " + example))
+                print()
+                continue
+            if not isinstance(example, dict):
+                print(wrap("• " + str(example)))
+                print()
+                continue
             print(color(BOLD, "  " + example.get("title", "Example")))
             for key in ("query", "action", "record", "url"):
                 if example.get(key):
