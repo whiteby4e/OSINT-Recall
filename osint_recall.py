@@ -32,14 +32,79 @@ YELLOW = "\033[93m"
 RED = "\033[91m"
 MAGENTA = "\033[95m"
 
+# Platform is intentionally session-only. It must never be stored in state.json.
+PLATFORM = None
+ANSI_ENABLED = True
+
+
 def color(code, value):
-    if os.environ.get("NO_COLOR") or not sys.stdout.isatty():
+    if os.environ.get("NO_COLOR") or not ANSI_ENABLED or not sys.stdout.isatty():
         return value
     return code + value + RESET
+
+
+def detect_platform():
+    if sys.platform.startswith("win"):
+        return "windows"
+    if sys.platform == "darwin":
+        return "macos"
+    return "linux"
+
+
+def choose_platform():
+    global PLATFORM, ANSI_ENABLED
+
+    detected = detect_platform()
+    labels = {
+        "windows": "Windows",
+        "macos": "macOS",
+        "linux": "Linux",
+    }
+
+    print(r"""
+╔══════════════════════════════════════════════════════════╗
+║                    OSINT-RECALL                         ║
+╚══════════════════════════════════════════════════════════╝
+
+  Choose your platform:
+
+  [1] Windows
+  [2] macOS
+  [3] Linux
+  [4] Auto detect
+""")
+    print(f"  Detected: {labels[detected]}")
+    print("  This choice applies to this run only.")
+    print("  It is never saved.")
+    print()
+
+    while True:
+        try:
+            choice = input("  Select > ").strip().lower()
+        except (EOFError, KeyboardInterrupt):
+            print("\nBye.")
+            raise SystemExit(0)
+
+        options = {
+            "1": "windows",
+            "2": "macos",
+            "3": "linux",
+            "4": detected,
+        }
+        if choice in options:
+            PLATFORM = options[choice]
+            # Windows is treated as ANSI-incompatible so old CMD terminals
+            # do not display raw escape sequences.
+            ANSI_ENABLED = PLATFORM != "windows"
+            return
+
+        print("  Enter 1, 2, 3, or 4.")
+
 
 def load_json(name):
     with open(DATA / name, "r", encoding="utf-8") as handle:
         return json.load(handle)
+
 
 def save_json(path, data):
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -47,6 +112,7 @@ def save_json(path, data):
     with open(temp, "w", encoding="utf-8") as handle:
         json.dump(data, handle, ensure_ascii=False, indent=2)
     temp.replace(path)
+
 
 def load_state():
     default = {"favorites": [], "history": [], "last_query": ""}
@@ -59,18 +125,28 @@ def load_state():
         pass
     return default
 
+
 def save_state(state):
     save_json(STATE_FILE, state)
 
+
 def clear_screen():
-    if sys.stdout.isatty():
+    if not sys.stdout.isatty():
+        return
+    if PLATFORM == "windows":
+        os.system("cls")
+    elif PLATFORM in ("linux", "macos"):
+        os.system("clear")
+    else:
         print("\033[2J\033[H", end="")
+
 
 def pause():
     try:
         input(color(DIM, "\nPress Enter to continue..."))
     except (EOFError, KeyboardInterrupt):
         print()
+
 
 def banner():
     print(color(CYAN, r"""
@@ -82,12 +158,15 @@ def banner():
     print(color(DIM, "  Personal OSINT knowledge base • terminal-first • stdlib only"))
     print()
 
+
 def wrap(value, width=78, indent="  "):
     return textwrap.fill(str(value), width=width, initial_indent=indent,
                          subsequent_indent=indent)
 
+
 def index_by_id(items):
     return {item["id"]: item for item in items}
+
 
 def record_history(state, technique_id):
     history = [x for x in state["history"] if x != technique_id]
@@ -95,8 +174,10 @@ def record_history(state, technique_id):
     state["history"] = history[:20]
     save_state(state)
 
+
 def is_favorite(state, technique_id):
     return technique_id in state["favorites"]
+
 
 def toggle_favorite(state, technique_id):
     if technique_id in state["favorites"]:
@@ -108,11 +189,13 @@ def toggle_favorite(state, technique_id):
     save_state(state)
     return result
 
+
 def print_item(item, number=None, state=None):
     prefix = f"{number:>2}. " if number is not None else ""
     marker = "★ " if state and is_favorite(state, item["id"]) else ""
     print(color(BOLD + BLUE, prefix + marker + item["title"]))
     print(color(DIM, f"    {item['category']}  •  {', '.join(item.get('tags', []))}"))
+
 
 def search_techniques(techniques, query, category=None):
     query = query.lower().strip()
@@ -121,6 +204,7 @@ def search_techniques(techniques, query, category=None):
         if (not category or item["category"].lower() == category.lower())
         and (not query or query in json.dumps(item, ensure_ascii=False).lower())
     ]
+
 
 def choose_from(items, state, prompt="Select"):
     if not items:
@@ -136,6 +220,7 @@ def choose_from(items, state, prompt="Select"):
         if raw.isdigit() and 1 <= int(raw) <= len(items):
             return items[int(raw) - 1]
         print(color(YELLOW, "Enter a valid number or b."))
+
 
 def show_technique(item, state):
     while True:
@@ -170,6 +255,7 @@ def show_technique(item, state):
         if action in ("q", "quit"):
             return "quit"
 
+
 def browse(techniques, state, category=None):
     items = [x for x in techniques if not category or x["category"] == category]
     item = choose_from(items, state)
@@ -177,6 +263,7 @@ def browse(techniques, state, category=None):
         record_history(state, item["id"])
         return show_technique(item, state)
     return "back"
+
 
 def search_menu(techniques, state):
     try:
@@ -191,6 +278,7 @@ def search_menu(techniques, state):
         record_history(state, item["id"])
         return show_technique(item, state)
     return "back"
+
 
 def categories_menu(techniques, state):
     categories = sorted({x["category"] for x in techniques})
@@ -210,6 +298,7 @@ def categories_menu(techniques, state):
                 return "quit"
         else:
             print(color(YELLOW, "Invalid selection."))
+
 
 def dork_generator(dorks, state):
     clear_screen()
@@ -248,6 +337,7 @@ def dork_generator(dorks, state):
     pause()
     return "back"
 
+
 def resources_menu(tools):
     clear_screen()
     print(color(BOLD + CYAN, "PUBLIC RESOURCES"))
@@ -271,10 +361,12 @@ def resources_menu(tools):
         pause()
     return "back"
 
+
 def random_technique(techniques, state):
     item = random.choice(techniques)
     record_history(state, item["id"])
     return show_technique(item, state)
+
 
 def favorites_menu(techniques, state):
     lookup = index_by_id(techniques)
@@ -283,6 +375,7 @@ def favorites_menu(techniques, state):
     if item:
         return show_technique(item, state)
     return "back"
+
 
 def history_menu(techniques, state):
     lookup = index_by_id(techniques)
@@ -296,6 +389,7 @@ def history_menu(techniques, state):
         return show_technique(item, state)
     return "back"
 
+
 def stats(techniques, dorks, tools, state):
     categories = len({x["category"] for x in techniques})
     print(color(BOLD, "OSINT-RECALL STATUS"))
@@ -307,6 +401,7 @@ def stats(techniques, dorks, tools, state):
     print(f"  Favorites  : {len(state['favorites'])}")
     print(f"  History    : {len(state['history'])}")
     pause()
+
 
 def export_pack(techniques, dorks, tools):
     stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -325,6 +420,7 @@ def export_pack(techniques, dorks, tools):
     print(color(GREEN, f"Exported: {path}"))
     pause()
     return "back"
+
 
 def import_pack():
     raw = input("Import JSON pack path > ").strip()
@@ -346,11 +442,14 @@ def import_pack():
     pause()
     return "back"
 
+
 def main_loop():
     techniques = load_json("techniques.json")
     dorks = load_json("dorks.json")
     tools = load_json("tools.json")
     state = load_state()
+
+    choose_platform()
 
     while True:
         clear_screen()
@@ -414,6 +513,7 @@ def main_loop():
             print(color(GREEN, "Goodbye."))
             return 0
 
+
 def command_line_search(techniques, query):
     results = search_techniques(techniques, query)
     if not results:
@@ -423,6 +523,7 @@ def command_line_search(techniques, query):
         print_item(item)
     return 0
 
+
 def parse_args():
     parser = argparse.ArgumentParser(
         description="OSINT-Recall: terminal-first personal OSINT knowledge base."
@@ -431,6 +532,7 @@ def parse_args():
     parser.add_argument("--random", action="store_true", help="Show a random technique and exit.")
     parser.add_argument("--no-color", action="store_true", help="Disable ANSI colors.")
     return parser.parse_args()
+
 
 def main():
     args = parse_args()
@@ -444,6 +546,7 @@ def main():
         show_technique(random.choice(techniques), state)
         return 0
     return main_loop()
+
 
 if __name__ == "__main__":
     sys.exit(main())
