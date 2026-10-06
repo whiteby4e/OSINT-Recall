@@ -1,61 +1,112 @@
 # OSINT-Recall 🔎
 
-A lightweight personal OSINT knowledge base for remembering techniques, learning how they work, and generating safe public-web search queries.
+A **terminal-first personal OSINT knowledge base** for remembering techniques, learning how they work, and generating safe public-web search queries.
 
-> Search → Find → Learn → Generate
+> **Search → Learn → Recall → Generate**
+
+## Why terminal-first?
+
+OSINT-Recall is designed to be useful on Linux, SSH sessions, lightweight machines, and older Windows installations without requiring a GUI framework.
+
+- 🪶 Standard-library only
+- 🐧 Linux-friendly
+- 🪟 Works on Windows/macOS too
+- 🔌 No database
+- ⌨️ Keyboard-first workflow
+- 📦 Knowledge stored as editable JSON
+- 🌐 Public resources open in the default browser
 
 ## Features
 
-- 🔎 Fast local search across techniques, categories, tags, and descriptions
-- 🧠 Learn view for each technique
-- ⚡ Dork Generator with reusable templates
-- 🌐 Public OSINT resource shortcuts
-- 📦 JSON-based knowledge base — easy to edit and extend
-- 🪶 Lightweight PySide6 desktop UI
+- 🔎 Search techniques across titles, categories, tags, summaries, examples and notes
+- 📚 Browse techniques by category
+- 🧠 Detailed learning view
+- ⭐ Local favorites
+- 🕘 Recently viewed history
+- ⚡ Dork/query generator
+- 🎲 Random technique
+- 🌐 Public OSINT resource launcher
+- 📊 Local statistics
+- 📤 Export knowledge packs
+- 📥 Import knowledge packs without overwriting repository data
+- 🎨 Automatic terminal colors with `NO_COLOR` support
+- 🧰 Optional command-line search mode
 
 ## Run
 
-Python 3.10+ is recommended.
+Python 3.8+ is recommended.
 
-~~~text
+```text
 git clone https://github.com/whiteby4e/OSINT-Recall.git
 cd OSINT-Recall
-python -m pip install -r requirements.txt
-python app.py
-~~~
+python osint_recall.py
+```
+
+No `pip install` is required.
+
+### Quick commands
+
+```text
+python osint_recall.py --search "certificate"
+python osint_recall.py --random
+python osint_recall.py --no-color
+```
+
+On Linux you can also run:
+
+```bash
+chmod +x osint_recall.py
+./osint_recall.py
+```
 
 ## Project layout
 
-~~~text
+```text
 OSINT-Recall/
-├── app.py
+├── osint_recall.py
 ├── data/
 │   ├── techniques.json
 │   ├── dorks.json
 │   └── tools.json
-├── requirements.txt
-└── README.md
-~~~
+├── README.md
+└── LICENSE
+```
+
+User state is stored outside the repository:
+
+```text
+~/.osint-recall/state.json
+```
+
+This keeps favorites/history personal and prevents the repository's knowledge files from being modified by normal use.
 
 ## Adding a technique
 
-Add an object to data/techniques.json with the fields:
-- id
-- title
-- category
-- tags
-- summary
-- learn
-- examples
-- notes
+Add an object to `data/techniques.json` with:
 
-The app loads the JSON at startup, so no database server is required.
+- `id`
+- `title`
+- `category`
+- `tags`
+- `summary`
+- `learn`
+- `examples`
+- `notes`
+
+The program loads JSON at startup. No database server is required.
+
+## Knowledge packs
+
+Use **Export knowledge pack** to create a portable JSON snapshot of the current knowledge base.
+
+Import stores the supplied pack under `~/.osint-recall/` and does not overwrite repository data.
 
 ## Scope & safety
 
 OSINT-Recall is designed for lawful research using public information. It is a knowledge and learning tool, not an intrusion toolkit.
 
 Do not use it to:
+
 - obtain passwords, authentication tokens, or private data
 - bypass access controls
 - stalk, harass, or expose private people
@@ -65,14 +116,16 @@ Use examples against domains and data you own, operate, or are explicitly author
 
 ## Roadmap
 
-- [ ] Favorites / bookmarks
+- [x] Terminal-first interface
+- [x] Favorites / bookmarks
+- [x] Recently viewed techniques
+- [x] Keyboard-first navigation
+- [x] Query generator
+- [x] Import/export knowledge packs
+- [ ] More knowledge packs
 - [ ] Technique difficulty and confidence
-- [ ] Recently viewed techniques
-- [ ] More query generators
-- [ ] Import/export knowledge packs
-- [ ] Keyboard-first navigation
-- [ ] Optional themes
-- [ ] Windows EXE packaging
+- [ ] Optional GUI frontend
+- [ ] Optional packaged binaries
 
 ## License
 
