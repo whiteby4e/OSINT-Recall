@@ -1,0 +1,38 @@
+[
+  {
+    "name": "Google Search",
+    "category": "Search",
+    "type": "Search engine",
+    "url": "https://www.google.com/"
+  },
+  {
+    "name": "Bing",
+    "category": "Search",
+    "type": "Search engine",
+    "url": "https://www.bing.com/"
+  },
+  {
+    "name": "Internet Archive",
+    "category": "Archives",
+    "type": "Web archive",
+    "url": "https://web.archive.org/"
+  },
+  {
+    "name": "GitHub",
+    "category": "GitHub",
+    "type": "Code hosting/search",
+    "url": "https://github.com/"
+  },
+  {
+    "name": "crt.sh",
+    "category": "Infrastructure",
+    "type": "Certificate Transparency",
+    "url": "https://crt.sh/"
+  },
+  {
+    "name": "RDAP.org",
+    "category": "Infrastructure",
+    "type": "Registration data",
+    "url": "https://www.rdap.org/"
+  }
+]
