@@ -20,7 +20,9 @@
         "placeholder": "pdf"
       }
     ],
-    "example": "site:example.org documentation filetype:pdf"
+    "example": "site:example.org documentation filetype:pdf",
+    "purpose": "Generate a structured public-web query.",
+    "notes": "Search syntax and indexing vary by provider."
   },
   {
     "id": "site-title",
@@ -38,7 +40,9 @@
         "placeholder": "documentation"
       }
     ],
-    "example": "site:example.org intitle:documentation"
+    "example": "site:example.org intitle:documentation",
+    "purpose": "Generate a structured public-web query.",
+    "notes": "Search syntax and indexing vary by provider."
   },
   {
     "id": "site-url",
@@ -56,7 +60,9 @@
         "placeholder": "docs"
       }
     ],
-    "example": "site:example.org inurl:docs"
+    "example": "site:example.org inurl:docs",
+    "purpose": "Generate a structured public-web query.",
+    "notes": "Search syntax and indexing vary by provider."
   },
   {
     "id": "exact-phrase",
@@ -69,6 +75,103 @@
         "placeholder": "project name"
       }
     ],
-    "example": "\"project name\""
+    "example": "\"project name\"",
+    "purpose": "Generate a structured public-web query.",
+    "notes": "Search syntax and indexing vary by provider."
+  },
+  {
+    "id": "site-exclusion",
+    "name": "Site + Exclusion",
+    "template": "site:{domain} {keyword} -{exclude}",
+    "fields": [
+      {
+        "name": "domain",
+        "label": "Domain",
+        "placeholder": "example.org"
+      },
+      {
+        "name": "keyword",
+        "label": "Keyword",
+        "placeholder": "documentation"
+      },
+      {
+        "name": "exclude",
+        "label": "Exclude term",
+        "placeholder": "jobs"
+      }
+    ],
+    "example": "site:example.org documentation -jobs",
+    "purpose": "Reduce a common category of irrelevant indexed results.",
+    "notes": "Exclusion behavior varies by search engine."
+  },
+  {
+    "id": "file-phrase",
+    "name": "File Type + Exact Phrase",
+    "template": "filetype:{extension} \"{phrase}\"",
+    "fields": [
+      {
+        "name": "extension",
+        "label": "Extension",
+        "placeholder": "pdf"
+      },
+      {
+        "name": "phrase",
+        "label": "Phrase",
+        "placeholder": "technical specification"
+      }
+    ],
+    "example": "filetype:pdf \"technical specification\"",
+    "purpose": "Search public indexed files containing an exact phrase.",
+    "notes": "Not restricted to one domain."
+  },
+  {
+    "id": "site-two-terms",
+    "name": "Site + Two Terms",
+    "template": "site:{domain} \"{term_a}\" \"{term_b}\"",
+    "fields": [
+      {
+        "name": "domain",
+        "label": "Domain",
+        "placeholder": "example.org"
+      },
+      {
+        "name": "term_a",
+        "label": "Term A",
+        "placeholder": "security"
+      },
+      {
+        "name": "term_b",
+        "label": "Term B",
+        "placeholder": "policy"
+      }
+    ],
+    "example": "site:example.org \"security\" \"policy\"",
+    "purpose": "Require two distinct phrases within indexed results.",
+    "notes": "Useful for reducing broad keyword noise."
+  },
+  {
+    "id": "site-language",
+    "name": "Site + Language",
+    "template": "site:{domain} {keyword} lang:{language}",
+    "fields": [
+      {
+        "name": "domain",
+        "label": "Domain",
+        "placeholder": "example.org"
+      },
+      {
+        "name": "keyword",
+        "label": "Keyword",
+        "placeholder": "documentation"
+      },
+      {
+        "name": "language",
+        "label": "Language code",
+        "placeholder": "en"
+      }
+    ],
+    "example": "site:example.org documentation lang:en",
+    "purpose": "Combine a site constraint with a language filter where supported.",
+    "notes": "Language filtering is provider-dependent."
   }
 ]
