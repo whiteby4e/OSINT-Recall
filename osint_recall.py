@@ -863,6 +863,7 @@ def stats(techniques, dorks, tools, workflows, state):
     print(f"  Workflows  : {len(workflows)}")
     print(f"  Favorites  : {len(state['favorites'])}")
     print(f"  History    : {len(state['history'])}")
+    print(f"  Queries    : {len(_query_history(state))}")
     pause()
 
 
@@ -925,7 +926,7 @@ def main_loop():
               f"{len(dorks)} query templates  •  {len(workflows)} workflows")
         print()
         menu = [
-            ("1", "Search techniques"),
+            ("1", "Explore techniques"),
             ("2", "Browse categories"),
             ("3", "Dork generator"),
             ("4", "Research workflows"),
