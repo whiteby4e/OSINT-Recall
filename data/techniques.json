@@ -1,0 +1,177 @@
+[
+  {
+    "id": "search-operators",
+    "title": "Search Operators",
+    "category": "Search",
+    "tags": [
+      "google",
+      "bing",
+      "operators",
+      "dorks"
+    ],
+    "summary": "Use search-engine operators to narrow public web results.",
+    "learn": "Operators let you constrain a normal web search by site, file type, URL text, title text, or exact phrases. Combine a few precise operators instead of building one enormous query.",
+    "examples": [
+      "site:example.org filetype:pdf",
+      "site:example.org intitle:documentation",
+      "site:example.org inurl:docs \"ESP32\""
+    ],
+    "notes": "Use only public information and domains you are allowed to research."
+  },
+  {
+    "id": "github-search",
+    "title": "GitHub Search",
+    "category": "GitHub",
+    "tags": [
+      "github",
+      "code",
+      "repositories"
+    ],
+    "summary": "Search public repositories, code, issues, and commits for research clues.",
+    "learn": "Start with a distinctive keyword, project name, domain, username, or error string. Narrow results with repository or language filters when appropriate.",
+    "examples": [
+      "\"unique project name\"",
+      "language:python \"error message\"",
+      "org:example-org documentation"
+    ],
+    "notes": "Do not search for or attempt to obtain credentials, secrets, or private data."
+  },
+  {
+    "id": "web-archives",
+    "title": "Web Archives",
+    "category": "Archives",
+    "tags": [
+      "wayback",
+      "archive",
+      "history"
+    ],
+    "summary": "Compare older public versions of websites and documents.",
+    "learn": "Archives can reveal how a public page changed over time. Record the capture date and compare meaningful changes rather than assuming an archived copy is current.",
+    "examples": [
+      "Check an archived public homepage",
+      "Compare an old public press release with the current page"
+    ],
+    "notes": "Respect robots, site terms, and copyright. Archives are evidence, not automatically proof of current facts."
+  },
+  {
+    "id": "reverse-image",
+    "title": "Reverse Image Search",
+    "category": "Images",
+    "tags": [
+      "images",
+      "verification",
+      "visual"
+    ],
+    "summary": "Use visual-search services to find possible sources, copies, or earlier appearances of a public image.",
+    "learn": "Crop irrelevant borders when useful, try more than one search engine, and compare dates and surrounding context. A visual match alone does not prove origin.",
+    "examples": [
+      "Search the full image",
+      "Search a distinctive crop containing the key subject"
+    ],
+    "notes": "Avoid using image matching to identify or track private people."
+  },
+  {
+    "id": "metadata",
+    "title": "Metadata Basics",
+    "category": "Files",
+    "tags": [
+      "exif",
+      "metadata",
+      "documents"
+    ],
+    "summary": "Inspect metadata that is intentionally or accidentally present in files you are authorized to analyze.",
+    "learn": "Images and documents can contain timestamps, software names, dimensions, and other metadata. Treat metadata as a clue because it can be removed or modified.",
+    "examples": [
+      "Inspect EXIF fields in an image you own",
+      "Inspect document properties in a research dataset"
+    ],
+    "notes": "Do not use metadata to expose private location or personal information about someone."
+  },
+  {
+    "id": "dns-rdap",
+    "title": "DNS & RDAP",
+    "category": "Infrastructure",
+    "tags": [
+      "dns",
+      "rdap",
+      "domains",
+      "network"
+    ],
+    "summary": "Understand public domain-registration and DNS records.",
+    "learn": "DNS can show public records such as A, AAAA, MX, NS, and TXT. RDAP can provide registration information where the registry makes it public.",
+    "examples": [
+      "A / AAAA — address records",
+      "MX — mail routing",
+      "NS — authoritative name servers"
+    ],
+    "notes": "Public DNS information is not permission to probe or access the systems behind it."
+  },
+  {
+    "id": "certificate-transparency",
+    "title": "Certificate Transparency",
+    "category": "Infrastructure",
+    "tags": [
+      "tls",
+      "certificates",
+      "subdomains"
+    ],
+    "summary": "Use public certificate logs to understand names that have appeared in TLS certificates.",
+    "learn": "Certificate transparency logs can provide historical clues about hostnames associated with a domain. Validate every hostname independently.",
+    "examples": [
+      "Look up certificates for example.org",
+      "Compare historical certificate names over time"
+    ],
+    "notes": "Use results for passive research; do not turn hostname discovery into unauthorized scanning."
+  },
+  {
+    "id": "username-search",
+    "title": "Username Search",
+    "category": "Identity",
+    "tags": [
+      "username",
+      "accounts",
+      "correlation"
+    ],
+    "summary": "Research a public handle across sites when the research context is legitimate.",
+    "learn": "Treat a matching username as a lead, not an identity proof. Compare public profile details, dates, language, and links before concluding that accounts belong to the same entity.",
+    "examples": [
+      "\"sample_handle\"",
+      "site:github.com \"sample_handle\""
+    ],
+    "notes": "Do not use this technique to stalk, harass, or expose a private person."
+  },
+  {
+    "id": "url-analysis",
+    "title": "URL Analysis",
+    "category": "Web",
+    "tags": [
+      "url",
+      "query",
+      "redirects"
+    ],
+    "summary": "Break a public URL into host, path, query, fragment, and parameters to understand what it represents.",
+    "learn": "Look for meaningful path segments, parameter names, tracking parameters, and redirects. Never assume a parameter is safe to modify on a live service.",
+    "examples": [
+      "https://example.org/docs?page=2",
+      "Separate host / path / query / fragment"
+    ],
+    "notes": "Prefer offline parsing when experimenting with URLs."
+  },
+  {
+    "id": "geolocation",
+    "title": "Geolocation Clues",
+    "category": "Geolocation",
+    "tags": [
+      "maps",
+      "geolocation",
+      "images"
+    ],
+    "summary": "Estimate a location from visible public clues without relying on private data.",
+    "learn": "Use signs, road layouts, architecture, terrain, language, storefronts, shadows, and map imagery as separate clues. Prefer several independent clues before making a conclusion.",
+    "examples": [
+      "Read a visible road sign",
+      "Compare public street features with map imagery"
+    ],
+    "notes": "Do not use geolocation to locate a private person or facilitate harassment."
+  }
+]
