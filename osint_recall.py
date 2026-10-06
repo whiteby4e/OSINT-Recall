@@ -411,7 +411,41 @@ def history_menu(techniques, state, lookup=None):
     return "back"
 
 
-def stats(techniques, dorks, tools, state):
+def workflow_menu(workflows):
+    while True:
+        clear_screen()
+        print(color(BOLD + MAGENTA, "RESEARCH WORKFLOWS"))
+        print(color(DIM, "Passive public-information workflows with explicit verification steps."))
+        print()
+        for i, item in enumerate(workflows, 1):
+            print(f"  {i:>2}. {item['title']}")
+        raw = input("\nWorkflow [number, b=back] > ").strip().lower()
+        if raw in ("b", "back", ""):
+            return "back"
+        if raw.isdigit() and 1 <= int(raw) <= len(workflows):
+            item = workflows[int(raw) - 1]
+            clear_screen()
+            print(color(CYAN, "━" * 72))
+            print(color(BOLD, item["title"]))
+            print(color(CYAN, "━" * 72))
+            print(wrap(item["goal"]))
+            print()
+            print(color(BOLD + GREEN, "STEPS"))
+            for i, step in enumerate(item["steps"], 1):
+                print(wrap(f"{i}. {step}"))
+            print()
+            print(color(BOLD + BLUE, "EXPECTED OUTPUTS"))
+            for value in item.get("outputs", []):
+                print(wrap("• " + value))
+            print()
+            print(color(BOLD + YELLOW, "SAFETY"))
+            print(wrap(item.get("safety", "Use only public information and authorized research.")))
+            pause()
+        else:
+            print(color(YELLOW, "Invalid selection."))
+
+
+def stats(techniques, dorks, tools, workflows, state):
     categories = len({x["category"] for x in techniques})
     print(color(BOLD, "OSINT-RECALL STATUS"))
     print()
@@ -419,12 +453,13 @@ def stats(techniques, dorks, tools, state):
     print(f"  Categories : {categories}")
     print(f"  Templates  : {len(dorks)}")
     print(f"  Resources  : {len(tools)}")
+    print(f"  Workflows  : {len(workflows)}")
     print(f"  Favorites  : {len(state['favorites'])}")
     print(f"  History    : {len(state['history'])}")
     pause()
 
 
-def export_pack(techniques, dorks, tools):
+def export_pack(techniques, dorks, tools, workflows):
     stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     default = Path.cwd() / f"osint-recall-pack-{stamp}.json"
     raw = input(f"Export path [{default}] > ").strip()
@@ -436,6 +471,7 @@ def export_pack(techniques, dorks, tools):
         "techniques": techniques,
         "dorks": dorks,
         "tools": tools,
+        "workflows": workflows,
     }
     save_json(path, pack)
     print(color(GREEN, f"Exported: {path}"))
@@ -468,7 +504,9 @@ def main_loop():
     techniques = load_json("techniques.json")
     dorks = load_json("dorks.json")
     tools = load_json("tools.json")
+    workflows = load_json("workflows.json")
     state = load_state()
+    lookup = index_by_id(techniques)
 
     choose_platform()
 
@@ -477,18 +515,19 @@ def main_loop():
         banner()
         print(f"  {color(BOLD, str(len(techniques)))} techniques  •  "
               f"{len({x['category'] for x in techniques})} categories  •  "
-              f"{len(dorks)} query templates")
+              f"{len(dorks)} query templates  •  {len(workflows)} workflows")
         print()
         menu = [
             ("1", "Search techniques"),
             ("2", "Browse categories"),
             ("3", "Dork generator"),
-            ("4", "Public resources"),
-            ("5", "Random technique"),
-            ("6", "Favorites"),
-            ("7", "Recent history"),
-            ("8", "Stats"),
-            ("9", "Export knowledge pack"),
+            ("4", "Research workflows"),
+            ("5", "Public resources"),
+            ("6", "Random technique"),
+            ("7", "Favorites"),
+            ("8", "Recent history"),
+            ("9", "Stats"),
+            ("a", "Export knowledge pack"),
             ("i", "Import knowledge pack"),
             ("0", "Exit"),
         ]
@@ -502,24 +541,26 @@ def main_loop():
             return 0
 
         if choice == "1":
-            result = search_menu(techniques, state)
+            result = search_menu(techniques, state, lookup)
         elif choice == "2":
-            result = categories_menu(techniques, state)
+            result = categories_menu(techniques, state, lookup)
         elif choice == "3":
             result = dork_generator(dorks, state)
         elif choice == "4":
-            result = resources_menu(tools)
+            result = workflow_menu(workflows)
         elif choice == "5":
-            result = random_technique(techniques, state)
+            result = resources_menu(tools)
         elif choice == "6":
-            result = favorites_menu(techniques, state)
+            result = random_technique(techniques, state, lookup)
         elif choice == "7":
-            result = history_menu(techniques, state)
+            result = favorites_menu(techniques, state, lookup)
         elif choice == "8":
-            stats(techniques, dorks, tools, state)
-            result = "back"
+            result = history_menu(techniques, state, lookup)
         elif choice == "9":
-            result = export_pack(techniques, dorks, tools)
+            stats(techniques, dorks, tools, workflows, state)
+            result = "back"
+        elif choice == "a":
+            result = export_pack(techniques, dorks, tools, workflows)
         elif choice == "i":
             result = import_pack()
         elif choice == "0":
