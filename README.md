@@ -29,6 +29,7 @@ OSINT-Recall is designed to be useful on Linux, SSH sessions, lightweight machin
 - 📊 Local statistics
 - 📤 Export knowledge packs
 - 📥 Import knowledge packs without overwriting repository data
+- 🖥️ Per-run Windows/macOS/Linux platform selection
 - 🎨 Automatic terminal colors with `NO_COLOR` support
 - 🧰 Optional command-line search mode
 
@@ -43,6 +44,19 @@ python osint_recall.py
 ```
 
 No `pip install` is required.
+
+On startup, OSINT-Recall asks which terminal environment you want to target:
+
+```text
+[1] Windows
+[2] macOS
+[3] Linux
+[4] Auto detect
+```
+
+The choice is **session-only**. It is never written to `~/.osint-recall/state.json`, so the same copy can be used on Windows, Linux, and macOS without carrying a platform setting between machines.
+
+Windows mode disables ANSI terminal styling to stay friendly with older CMD environments. Linux/macOS mode enables ANSI styling when the terminal supports it.
 
 ### Quick commands
 
@@ -78,7 +92,7 @@ User state is stored outside the repository:
 ~/.osint-recall/state.json
 ```
 
-This keeps favorites/history personal and prevents the repository's knowledge files from being modified by normal use.
+This keeps favorites/history personal and prevents the repository's knowledge files from being modified by normal use. The selected platform is **not** part of this state.
 
 ## Adding a technique
 
@@ -122,6 +136,7 @@ Use examples against domains and data you own, operate, or are explicitly author
 - [x] Keyboard-first navigation
 - [x] Query generator
 - [x] Import/export knowledge packs
+- [x] Per-run platform selection
 - [ ] More knowledge packs
 - [ ] Technique difficulty and confidence
 - [ ] Optional GUI frontend
