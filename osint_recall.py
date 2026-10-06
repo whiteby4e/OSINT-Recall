@@ -428,7 +428,7 @@ def history_menu(techniques, state, lookup=None):
         return "back"
     item = choose_from(items, state)
     if item:
-        return show_technique(item, state)
+        return show_technique(item, state, lookup)
     return "back"
 
 
@@ -626,7 +626,8 @@ def main():
         return command_line_search(techniques, args.search)
     if args.random:
         state = load_state()
-        show_technique(random.choice(techniques), state)
+        lookup = index_by_id(techniques)
+        show_technique(random.choice(techniques), state, lookup)
         return 0
     return main_loop()
 
