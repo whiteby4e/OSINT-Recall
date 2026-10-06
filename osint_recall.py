@@ -331,49 +331,317 @@ def categories_menu(techniques, state, lookup=None):
             print(color(YELLOW, "Invalid selection."))
 
 
-def dork_generator(dorks, state):
-    clear_screen()
-    print(color(BOLD + MAGENTA, "DORK GENERATOR"))
-    print(color(DIM, "Generate passive/public-web search queries from templates."))
-    print()
-    for i, item in enumerate(dorks, 1):
-        print(f"  {i:>2}. {item['name']}")
-    raw = input("\nTemplate [number, b=back] > ").strip().lower()
-    if raw in ("b", "back", ""):
-        return "back"
-    if not raw.isdigit() or not 1 <= int(raw) <= len(dorks):
-        print(color(YELLOW, "Invalid template."))
-        pause()
-        return "back"
-    item = dorks[int(raw) - 1]
-    print()
-    print(color(BOLD + CYAN, item["name"]))
-    print(wrap(item.get("purpose", "Generate a structured public-web query.")))
-    if item.get("example"):
-        print(wrap("Example: " + item["example"]))
-    if item.get("notes"):
-        print(wrap("Note: " + item["notes"], indent="  "))
-    print()
-    values = {}
-    for field in item["fields"]:
-        value = input(f"{field['label']} [{field.get('placeholder', '')}] > ").strip()
-        if not value:
-            print(color(YELLOW, "All fields are required."))
-            pause()
-            return "back"
-        values[field["name"]] = value
-    query = item["template"]
-    for key, value in values.items():
-        query = query.replace("{" + key + "}", value)
+def _query_history(state):
+    history = state.get("query_history", [])
+    return history if isinstance(history, list) else []
+
+
+def save_query(state, query):
+    query = query.strip()
+    if not query:
+        return
+    history = [x for x in _query_history(state) if x != query]
+    history.insert(0, query)
+    state["query_history"] = history[:30]
     state["last_query"] = query
     save_state(state)
+
+
+def _quote_query_value(value):
+    value = value.strip()
+    if not value:
+        return ""
+    if " " in value and not (value.startswith('"') and value.endswith('"')):
+        return '"' + value + '"'
+    return value
+
+
+def _operator_builder(state):
+    query = []
+    operators = [
+        ("1", "site:", "Limit results to a public domain"),
+        ("2", "filetype:", "Limit results to an indexed file extension"),
+        ("3", "intitle:", "Look for a term in page titles"),
+        ("4", "inurl:", "Look for a term in URLs"),
+        ("5", '"..."', "Search an exact phrase"),
+        ("6", "-", "Exclude a term"),
+        ("7", "OR", "Match either of two terms"),
+        ("8", "lang:", "Request a language where supported"),
+    ]
+
+    while True:
+        clear_screen()
+        print(color(BOLD + MAGENTA, "QUERY BUILDER"))
+        print(color(DIM, "Build a public-web search query one operator at a time."))
+        print()
+        current = " ".join(query) if query else "(empty)"
+        print(color(BOLD + CYAN, "CURRENT QUERY"))
+        print(wrap(current))
+        print()
+        print(color(BOLD, "ADD"))
+        for key, operator, description in operators:
+            print(f"  [{key}] {operator:<10} {description}")
+        print()
+        print("  [9] Clear query")
+        print("  [0] Generate / save")
+        print("  [b] Back")
+
+        try:
+            choice = input("\nSelect > ").strip().lower()
+        except (EOFError, KeyboardInterrupt):
+            return "quit"
+
+        if choice == "b":
+            return "back"
+        if choice == "9":
+            query = []
+            continue
+        if choice == "0":
+            if not query:
+                print(color(YELLOW, "Add at least one condition first."))
+                pause()
+                continue
+            final = " ".join(query)
+            save_query(state, final)
+            print()
+            print(color(GREEN, "Generated query:"))
+            print(color(BOLD, "  " + final))
+            print(color(DIM, "Saved to recent queries."))
+            pause()
+            continue
+        if choice not in {x[0] for x in operators}:
+            print(color(YELLOW, "Invalid selection."))
+            pause()
+            continue
+
+        operator = next(x[1] for x in operators if x[0] == choice)
+        if operator == "OR":
+            value = input("Term A > ").strip()
+            other = input("Term B > ").strip()
+            if value and other:
+                query.append(f"{_quote_query_value(value)} OR {_quote_query_value(other)}")
+        elif operator == '"..."':
+            value = input("Exact phrase > ").strip()
+            if value:
+                query.append('"' + value.replace('"', "") + '"')
+        else:
+            label = {
+                "site:": "Domain",
+                "filetype:": "Extension",
+                "intitle:": "Title keyword",
+                "inurl:": "URL keyword",
+                "-": "Exclude term",
+                "lang:": "Language code",
+            }[operator]
+            value = input(f"{label} > ").strip()
+            if value:
+                if operator == "-" and " " in value:
+                    query.append("-" + '"' + value.replace('"', "") + '"')
+                else:
+                    query.append(operator + value)
+
+        if query:
+            save_query(state, " ".join(query))
+
+
+def _preset_query(dorks, state):
+    presets = [
+        ("Public PDFs on a site", "site:{domain} filetype:pdf {term}"),
+        ("Documentation pages", "site:{domain} intitle:{term}"),
+        ("Pages with a URL keyword", "site:{domain} inurl:{term}"),
+        ("Exact phrase on a site", 'site:{domain} "{phrase}"'),
+        ("Exclude an irrelevant term", "site:{domain} {term} -{exclude}"),
+        ("Two related terms", 'site:{domain} "{term_a}" "{term_b}"'),
+        ("Public files with a phrase", 'filetype:{extension} "{phrase}"'),
+        ("Language-filtered pages", "site:{domain} {term} lang:{language}"),
+    ]
+    while True:
+        clear_screen()
+        print(color(BOLD + MAGENTA, "QUERY PRESETS"))
+        print(color(DIM, "Ready-made starting points. You can edit the result afterward."))
+        print()
+        for i, (name, _) in enumerate(presets, 1):
+            print(f"  {i:>2}. {name}")
+        raw = input("\nPreset [number, b=back] > ").strip().lower()
+        if raw in ("b", "back", ""):
+            return "back"
+        if not raw.isdigit() or not 1 <= int(raw) <= len(presets):
+            print(color(YELLOW, "Invalid preset."))
+            pause()
+            continue
+        name, template = presets[int(raw) - 1]
+        values = {}
+        fields = re.findall(r"{([^}]+)}", template)
+        print()
+        print(color(BOLD + CYAN, name))
+        print(wrap("Fill the fields below."))
+        for field in fields:
+            labels = {
+                "domain": "Domain",
+                "term": "Keyword / term",
+                "phrase": "Exact phrase",
+                "exclude": "Exclude term",
+                "term_a": "Term A",
+                "term_b": "Term B",
+                "extension": "File extension",
+                "language": "Language code",
+            }
+            value = input(f"{labels.get(field, field)} > ").strip()
+            if not value:
+                print(color(YELLOW, "This field is required."))
+                pause()
+                break
+            values[field] = value
+        else:
+            query = template
+            for key, value in values.items():
+                if key in ("phrase", "term_a", "term_b") and " " in value:
+                    value = '"' + value.replace('"', "") + '"'
+                    query = query.replace('"' + "{" + key + "}" + '"', value)
+                else:
+                    query = query.replace("{" + key + "}", value)
+            save_query(state, query)
+            print()
+            print(color(GREEN, "Generated query:"))
+            print(color(BOLD, "  " + query))
+            print(color(DIM, "Saved to recent queries."))
+            pause()
+        continue
+
+
+def _query_examples():
+    examples = [
+        ('site:example.org filetype:pdf "annual report"', "Find public indexed PDF reports on a site."),
+        ('site:example.org intitle:documentation', "Find pages whose titles contain a term."),
+        ('site:example.org inurl:docs', "Find indexed URLs containing a path term."),
+        ('"unique phrase"', "Find pages containing an exact phrase."),
+        ('site:example.org policy -jobs', "Reduce a common irrelevant result category."),
+        ('site:example.org security OR privacy', "Search for either of two terms."),
+    ]
+    clear_screen()
+    print(color(BOLD + MAGENTA, "SEARCH EXAMPLES"))
     print()
-    print(color(GREEN, "Generated query:"))
-    print(color(BOLD, "  " + query))
-    print()
-    print(color(DIM, "Copy manually, or paste it into your preferred search engine."))
+    for i, (query, description) in enumerate(examples, 1):
+        print(color(BOLD, f"{i}. {query}"))
+        print(wrap(description, indent="   "))
+        print()
+    print(color(DIM, "Search-engine syntax and indexing can vary."))
     pause()
     return "back"
+
+
+def _query_history_menu(state):
+    while True:
+        history = _query_history(state)
+        clear_screen()
+        print(color(BOLD + MAGENTA, "RECENT QUERIES"))
+        print()
+        if not history:
+            print(color(DIM, "No generated queries yet."))
+            pause()
+            return "back"
+        for i, query in enumerate(history, 1):
+            print(f"  {i:>2}. {query}")
+        print()
+        raw = input("[number] view  [c] clear  [b] back > ").strip().lower()
+        if raw in ("b", "back", ""):
+            return "back"
+        if raw == "c":
+            state["query_history"] = []
+            save_state(state)
+            print(color(GREEN, "Query history cleared."))
+            pause()
+            continue
+        if raw.isdigit() and 1 <= int(raw) <= len(history):
+            query = history[int(raw) - 1]
+            print()
+            print(color(BOLD + GREEN, "QUERY"))
+            print(wrap(query))
+            print(color(DIM, "Use it as a starting point for another search."))
+            pause()
+        else:
+            print(color(YELLOW, "Invalid selection."))
+            pause()
+
+
+def dork_generator(dorks, state):
+    while True:
+        clear_screen()
+        print(color(BOLD + MAGENTA, "DORK GENERATOR"))
+        print(color(DIM, "Build and learn public-web search queries from guided tools."))
+        print()
+        print("  [1] Query builder")
+        print("  [2] Query presets")
+        print("  [3] Browse templates")
+        print("  [4] Search examples")
+        print("  [5] Recent queries")
+        print("  [6] Random template")
+        print("  [b] Back")
+        print()
+
+        try:
+            choice = input("Select > ").strip().lower()
+        except (EOFError, KeyboardInterrupt):
+            return "quit"
+
+        if choice == "b":
+            return "back"
+        if choice == "1":
+            result = _operator_builder(state)
+        elif choice == "2":
+            result = _preset_query(dorks, state)
+        elif choice == "3":
+            result = _browse_dork_templates(dorks, state)
+        elif choice == "4":
+            result = _query_examples()
+        elif choice == "5":
+            result = _query_history_menu(state)
+        elif choice == "6":
+            item = random.choice(dorks)
+            print()
+            print(color(BOLD + CYAN, item["name"]))
+            print(wrap(item.get("purpose", "Template")))
+            print(wrap("Example: " + item.get("example", "")))
+            pause()
+            result = "back"
+        else:
+            print(color(YELLOW, "Invalid selection."))
+            pause()
+            result = "back"
+
+        if result == "quit":
+            return "quit"
+
+
+def _browse_dork_templates(dorks, state):
+    while True:
+        clear_screen()
+        print(color(BOLD + MAGENTA, "QUERY TEMPLATES"))
+        print()
+        for i, item in enumerate(dorks, 1):
+            print(f"  {i:>2}. {item['name']}")
+        raw = input("\nTemplate [number, b=back] > ").strip().lower()
+        if raw in ("b", "back", ""):
+            return "back"
+        if not raw.isdigit() or not 1 <= int(raw) <= len(dorks):
+            print(color(YELLOW, "Invalid template."))
+            pause()
+            continue
+        item = dorks[int(raw) - 1]
+        clear_screen()
+        print(color(BOLD + CYAN, item["name"]))
+        print(wrap(item.get("purpose", "Generate a structured public-web query.")))
+        print()
+        print(color(BOLD, "Example"))
+        print(wrap(item.get("example", "")))
+        if item.get("notes"):
+            print()
+            print(color(BOLD + YELLOW, "NOTE"))
+            print(wrap(item["notes"]))
+        print()
+        print(color(DIM, "This template can be recreated in Query Builder."))
+        pause()
+        return "back"
 
 
 def resources_menu(tools):
