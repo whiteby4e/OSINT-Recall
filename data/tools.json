@@ -34,5 +34,37 @@
     "category": "Infrastructure",
     "type": "Registration data",
     "url": "https://www.rdap.org/"
+  },
+  {
+    "name": "urlscan.io",
+    "category": "Web Analysis",
+    "type": "Public URL analysis",
+    "url": "https://urlscan.io/",
+    "use": "Review publicly submitted scans and URL-related observations.",
+    "cautions": "Check submission visibility; do not submit sensitive URLs or private data."
+  },
+  {
+    "name": "Google Lens",
+    "category": "Images & Verification",
+    "type": "Visual search",
+    "url": "https://lens.google.com/",
+    "use": "Visual matching and image-context discovery.",
+    "cautions": "A visual match is evidence to investigate, not proof of origin or identity."
+  },
+  {
+    "name": "ExifTool",
+    "category": "Files & Metadata",
+    "type": "Metadata utility",
+    "url": "https://exiftool.org/",
+    "use": "Read metadata in files you are authorized to inspect.",
+    "cautions": "Metadata may be absent, rewritten, or privacy-sensitive."
+  },
+  {
+    "name": "RIPEstat",
+    "category": "Infrastructure",
+    "type": "Internet measurement portal",
+    "url": "https://stat.ripe.net/",
+    "use": "Public Internet measurement and network-registration information.",
+    "cautions": "Use results as public observations; do not infer authorization to access systems."
   }
 ]
