@@ -336,8 +336,15 @@ def dork_generator(dorks, state):
         pause()
         return "back"
     item = dorks[int(raw) - 1]
-    values = {}
     print()
+    print(color(BOLD + CYAN, item["name"]))
+    print(wrap(item.get("purpose", "Generate a structured public-web query.")))
+    if item.get("example"):
+        print(wrap("Example: " + item["example"]))
+    if item.get("notes"):
+        print(wrap("Note: " + item["notes"], indent="  "))
+    print()
+    values = {}
     for field in item["fields"]:
         value = input(f"{field['label']} [{field.get('placeholder', '')}] > ").strip()
         if not value:
@@ -371,6 +378,10 @@ def resources_menu(tools):
     if raw.isdigit() and 1 <= int(raw) <= len(tools):
         tool = tools[int(raw) - 1]
         print(f"\n{tool['name']}: {tool['url']}")
+        if tool.get("use"):
+            print(wrap("Purpose: " + tool["use"]))
+        if tool.get("cautions"):
+            print(wrap("Caution: " + tool["cautions"]))
         try:
             webbrowser.open(tool["url"])
             print(color(GREEN, "Opened in the default browser."))
