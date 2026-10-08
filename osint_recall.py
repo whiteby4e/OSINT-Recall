@@ -20,7 +20,7 @@ ROOT = Path(__file__).resolve().parent
 DATA = ROOT / "data"
 STATE_DIR = Path.home() / ".osint-recall"
 STATE_FILE = STATE_DIR / "state.json"
-PACK_VERSION = 1
+PACK_VERSION = 2
 
 RESET = "\033[0m"
 BOLD = "\033[1m"
@@ -120,8 +120,15 @@ def load_state():
         if STATE_FILE.exists():
             with open(STATE_FILE, "r", encoding="utf-8") as handle:
                 value = json.load(handle)
-            default.update(value)
-    except (OSError, ValueError):
+            if isinstance(value, dict):
+                for key in ("favorites", "history", "query_history"):
+                    if key in value and not isinstance(value[key], list):
+                        value[key] = []
+                if not isinstance(value.get("last_query", ""), str):
+                    value["last_query"] = ""
+                default.update(value)
+    except (OSError, ValueError, TypeError):
+        # A damaged state file should never make the knowledge base unusable.
         pass
     return default
 
@@ -895,8 +902,10 @@ def import_pack():
     try:
         with open(path, "r", encoding="utf-8") as handle:
             pack = json.load(handle)
-        if pack.get("format") != "OSINT-Recall Knowledge Pack":
+        if not isinstance(pack, dict) or pack.get("format") != "OSINT-Recall Knowledge Pack":
             raise ValueError("Not an OSINT-Recall pack.")
+        if not isinstance(pack.get("version"), int) or pack["version"] > PACK_VERSION:
+            raise ValueError(f"Unsupported knowledge-pack version: {pack.get('version')!r}")
         # Import to a separate local file; never overwrite the repository's data.
         target = STATE_DIR / ("imported-" + path.name)
         save_json(target, pack)
